@@ -84,8 +84,8 @@ def kb_fun():
     # sat = Sat.parse(file_name)
     # kb = KnowledgeBase.from_sat(sat)
 
-    # kb.train(lr=1.e-2)
-    kb.solve()
+    kb.train(lr=1.e-2)
+    # kb.solve()
 
 if __name__ == '__main__':
     kb_fun()

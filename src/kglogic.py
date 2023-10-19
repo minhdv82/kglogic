@@ -3,14 +3,12 @@ from typing import List, Union, Set
 from .graph import *
 from .ops import *
 from .sat import Sat
+from .utils import clip
 
 ValueType = Union[float, Node]
 
 # list of operators exposed to user
 OPS_LIST = ('NOT', 'AND', 'OR', 'IMPL', 'EQUI', 'ONE')
-
-def clip(value, lo=0, hi=1):
-    return lo if value < lo else hi if value > hi else value
 
 class Symbol:
     def __init__(self, name: str, op: str, children: Set, value: ValueType = 1.) -> None:
@@ -26,7 +24,7 @@ class Symbol:
 
     @property
     def is_atomic(self) -> bool:
-        return self._op == 'ASSIGN'
+        return not self._children
 
     def __not__(self):
         return Symbol(name='Not(' + self._name + ')', op='NOT',
