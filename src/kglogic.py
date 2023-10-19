@@ -251,7 +251,7 @@ class KnowledgeBase:
             for param in self.parameters():
                 param.value = clip(param.value - lr * param.grad)
             if iter % 100 == 0:
-                print(f'iter: {iter}, loss: {loss.value}')
+                print(f'iter: {iter}, loss: {loss.value:.3e}')
             if loss.value < converge:
                 print(f"Check converge at iter = {iter}")
                 if self.sat():
