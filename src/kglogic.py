@@ -141,8 +141,8 @@ class KnowledgeBase:
                 print("solution")
                 self._print_atoms()
                 return
-            symbol = unvisited_symbols[0]
-            dep_atoms = symbol.get_atoms()
+            symbol: Symbol = unvisited_symbols[0]
+            dep_atoms = symbol.get_required_atoms()
             atoms = dep_atoms - visited_atoms
             cnt = len(atoms)
             if cnt > 0:
