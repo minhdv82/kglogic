@@ -163,7 +163,7 @@ class KnowledgeBase:
     def _build_topo(self):
         if self.topo:
             return self.topo
-        res = []
+        topo = []
         visited = set()
         def _recursive(symbol: Symbol):
             if symbol.is_atomic or symbol in visited:
@@ -171,11 +171,11 @@ class KnowledgeBase:
             visited.add(symbol)
             for child in symbol._children:
                 _recursive(child)
-            res.append(symbol)
+            topo.append(symbol)
         for symbol in self.symbols:
             _recursive(symbol)
-        self.topo = res
-        return res
+        self.topo = topo
+        return topo
 
     def entails(self, symbol: Symbol):
         atoms = symbol.get_required_atoms()
@@ -298,9 +298,11 @@ def AND(*args, name: str='', value: ValueType=1):
 def OR(*args, name: str='', value: ValueType=1):
     return Symbol(name=name, op='OR', children=args, value=value)
 
+# cause implies effective
 def IMPL(cause_symbol, eff_symbol, name: str='', value: ValueType=1):
     return Symbol(name=name, op='IMPL', children=(cause_symbol, eff_symbol), value=value)
 
+# lhs is equivalent to rhs
 def EQUI(lhs, rhs, name: str='', value: ValueType=1):
     return Symbol(name=name, op='EQUI', children=(lhs, rhs), value=value)
 
