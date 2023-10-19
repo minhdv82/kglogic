@@ -64,13 +64,18 @@ class Symbol:
         self.truth.value = opsd_dict_[self._op](*child_vals)
         return self.truth.value > .9
 
+    @property
+    def requires_grad(self):
+        return self.truth.requires_grad
+
     def none_val(self):
         self.truth.value = None
 
     def zero_grad(self):
         self.truth.grad = 0
 
-    def get_atoms(self):
+    # get set of atoms that this symbol depends on
+    def get_required_atoms(self):
         if self.is_atomic:
             return set()
         res = set()
@@ -173,7 +178,7 @@ class KnowledgeBase:
         return res
 
     def entails(self, symbol: Symbol):
-        atoms = symbol.get_atoms()
+        atoms = symbol.get_required_atoms()
 
         pass
 
@@ -181,28 +186,28 @@ class KnowledgeBase:
         return [atom.truth for atom in self.atoms]
 
     def eval_mode(self):
-        for atom in self.atoms:
-            atom.truth.requires_grad = False
+        for param in self.parameters():
+            param.requires_grad = False
 
     def train_mode(self):
-        for atom in self.atoms:
-            atom.truth.requires_grad = True
-            atom.zero_grad()
+        for param in self.parameters():
+            param.requires_grad = True
+            param.grad = 0
 
     def zero_grad(self):
-        for atom in self.atoms:
-            atom.zero_grad()
+        for param in self.parameters():
+            param.grad = 0
 
     def _round(self):
-        for atom in self.atoms:
-            atom.truth.value = 0 if atom.truth.value < .5 else 1
+        for param in self.parameters():
+            param.value = 0 if param.value < .5 else 1
 
-    def _heuristic(self):
-        for atom in self.atoms:
-            if atom.truth.value < .2:
-                atom.truth.value = 0
-            elif atom.truth.value > .8:
-                atom.truth.value = 1
+    def _heuristic(self, lo=.2, hi=.8):
+        for param in self.parameters():
+            if param.value < lo:
+                param.value = 0
+            elif param.value > hi:
+                param.value = 1
 
     def sat(self):
         def _backup():
@@ -224,7 +229,6 @@ class KnowledgeBase:
                 break
         if not flag:
             _restore()
-            # self._heuristic()
         return flag
 
     def _calc_loss(self) -> Node:

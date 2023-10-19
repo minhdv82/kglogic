@@ -2,7 +2,7 @@ from src.graph import Node
 from src.kglogic import *
 from src.sat import Sat
 
-def fun():
+def grad_fun():
     x, y = Node(.9, requires_grad=True), Node(0.2, requires_grad=True)
     foo = y + .5
     z = x.ein(foo)
@@ -24,6 +24,7 @@ def kb_fun():
     # kb.train()
     # kb.solve()
 
+    # this stuff is from wikipedia
     a = Atom('a')
     m = Atom('m')
     u = Atom('u')
@@ -89,4 +90,4 @@ def kb_fun():
 
 if __name__ == '__main__':
     kb_fun()
-    # fun()
+    # grad_fun()
