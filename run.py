@@ -13,8 +13,8 @@ def grad_fun():
     print(x.grad, y.grad)
 
 def kb_fun():
-    # a1 = Atom('Kengo is great')
-    # a2 = Atom('Rua cop')
+    # a1 = Atom('foo')
+    # a2 = Atom('bar')
     # p1 = IMPL(a2, a1)
     # p1 = AND(a2, NOT(a1))
     # p2 = NOT(a1)
