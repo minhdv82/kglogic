@@ -4,6 +4,7 @@ from .graph import *
 from .ops import *
 from .sat import Sat
 from .utils import clip
+from .optim import SGD
 
 ValueType = Union[float, Node]
 
@@ -239,17 +240,19 @@ class KnowledgeBase:
             
         return loss / len(self.symbols)
 
-    def train(self, lr: float=1.e-3, converge: float=1e-2):
+    def train(self, lr: float=1.e-3, converge: float=1e-3):
         self.train_mode()
-        self.prepare_model(fuzzy=True)
+        self.prepare_model(fuzzy=False)
         # only zero_grad once!
         self.zero_grad()
+        # optim = SGD(params=self.parameters(), lr=lr, momentum=.9, weight_decay=.999, nesterov=True)
         for iter in range(10000):
-            # self.zero_grad()
+            self.zero_grad()
             loss = self._calc_loss()
             loss.backward()
+            # clip params
             for param in self.parameters():
-                param.value = clip(param.value - lr * param.grad)
+                param.value = clip(param.value - lr * param.grad, 0)
             if iter % 100 == 0:
                 print(f'iter: {iter}, loss: {loss.value:.3e}')
             if loss.value < converge:
@@ -261,7 +264,7 @@ class KnowledgeBase:
                 else:
                     lr *= 1.2
                     converge *= .75
-                    self._heuristic()
+                    # self._heuristic()
                     print('False sat!')
     @staticmethod
     def from_sat(sat: Sat):

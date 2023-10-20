@@ -9,7 +9,8 @@ class Node:
         self.requires_grad = requires_grad
         self._out_grad = lambda : None
 
-    def backward(self):
+    # we might want to manipulate initial value of grad
+    def backward(self, grad=None):
         if not self.requires_grad:
             print('This node does not requires grad!')
             return
@@ -23,7 +24,7 @@ class Node:
                 nodes.append(node)
         _topo_sort(self)
         
-        self.grad = 1.
+        self.grad = 1. if grad is None else grad
         for node in reversed(nodes):
             node._out_grad()
 
